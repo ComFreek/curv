@@ -32,12 +32,20 @@ jobs:
     - name: Test built executable
       shell: msys2 {0}
       run: ./release/curv --version
-    
+      
+    - name: Copy runtime dependencies to build dir
+      shell: msys2 {0}
+      run: |
+        cp /mingw64/lib/libHalf*.dll ./release
+        cp /mingw64/lib/tbb.dll ./release
+        cp /mingw64/lib/libopenvdb.dll ./release
+        cp /mingw64/lib/libboost_filesystem-mt.dll ./release
     - uses: actions/upload-artifact@v2
       with:
         name: windows-binaries-${{ github.sha }}
         path: |
           release/*.exe
-          release/*.a
+          release/*.dll
+          
 
     
