@@ -25,6 +25,21 @@ jobs:
         update: true
         cache: true
         install: "git diffutils mingw-w64-x86_64-clang make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-mesa mingw-w64-x86_64-openexr mingw-w64-x86_64-intel-tbb mingw-w64-x86_64-glm mingw-w64-x86_64-glew mingw-w64-x86_64-dbus patch mingw-w64-x86_64-openvdb"
+
+    - name: Prepare ccache timestamp
+      id: ccache_cache_timestamp
+      shell: msys2 -c 'cmake -P {0}'
+      run: |
+        string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+        message("::set-output name=timestamp::${current_date}")
+
+    - name: ccache cache files
+      uses: actions/cache@v2
+      with:
+        path: .ccache
+        key: ${ { matrix.config.name } }-ccache-${ { steps.ccache_cache_timestamp.outputs.timestamp } }
+        restore-keys: |
+          ${ { matrix.config.name } }-ccache-
       
     - name: Build Curv
       shell: msys2 {0}
@@ -36,11 +51,12 @@ jobs:
     - name: Copy runtime dependencies to build dir
       shell: msys2 {0}
       run: |
-        cp /mingw64/lib/libHalf*.dll ./release
-        cp /mingw64/lib/tbb.dll ./release
-        cp /mingw64/lib/libopenvdb.dll ./release
-        cp /mingw64/lib/libboost_filesystem-mt.dll ./release
+        cp libHalf*.dll ./release
+        cp tbb.dll ./release
+        cp libopenvdb.dll ./release
+        cp libboost_filesystem-mt.dll ./release
     - uses: actions/upload-artifact@v2
+      if: ${{ always() }}
       with:
         name: windows-binaries-${{ github.sha }}
         path: |

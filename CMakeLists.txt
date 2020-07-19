@@ -5,6 +5,10 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
     message(FATAL_ERROR "Do not use 'cmake .'; instead, just type 'make'")
 endif ()
 
+# Use CCache to create caches and speed up builds, particularly on CI servers
+set(CMAKE_C_COMPILER_LAUNCHER ccache)
+set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
+
 execute_process(COMMAND sh -c "${CMAKE_SOURCE_DIR}/cmake/make_version.sh"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
