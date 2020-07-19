@@ -29,9 +29,7 @@ jobs:
         update: true
         cache: true
         install: "git diffutils mingw-w64-x86_64-clang make mingw-w64-x86_64-cmake mingw-w64-x86_64-boost mingw-w64-x86_64-mesa mingw-w64-x86_64-openexr mingw-w64-x86_64-intel-tbb mingw-w64-x86_64-glm mingw-w64-x86_64-glew mingw-w64-x86_64-dbus patch mingw-w64-x86_64-openvdb"
-        
-    - name: Show git repo information
-      run: git describe --dirty
+      
     - name: Build Curv
       shell: msys2 {0}
       run: make
